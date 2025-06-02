@@ -1,5 +1,5 @@
 {
-    "name": "recipe-website",
+    "name": "recipe-website/recipe",
     "description": "A simple recipe sharing website",
     "type": "project",
     "require": {
