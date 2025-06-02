@@ -52,7 +52,7 @@ jobs:
 
     - name: Create test database
       run: |
-        mysql -h 127.0.0.1 -u recipeadmin -pkod12345 recipedb_test < recipedb.sql
+        mysql -h 127.0.0.1 -u root -prootpassword recipedb_test < recipedb.sql
 
     - name: Run PHPUnit tests
       run: |
