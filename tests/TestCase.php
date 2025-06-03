@@ -14,10 +14,16 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
         
-        // Create a mock for mysqli with a custom class
+        // Create a mock for mysqli with all required methods
         $this->db = $this->getMockBuilder(\mysqli::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getInsertId'])
+            ->addMethods([
+                'prepare',
+                'query',
+                'getInsertId',
+                'connect_error',
+                'close'
+            ])
             ->getMock();
         
         // Set up common mock expectations
@@ -32,6 +38,10 @@ class TestCase extends BaseTestCase
             ->willReturnCallback(function() {
                 return $this->lastInsertId;
             });
+
+        // Set up connect_error
+        $this->db->method('connect_error')
+            ->willReturn(null);
     }
 
     protected function tearDown(): void

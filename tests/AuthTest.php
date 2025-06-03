@@ -26,7 +26,11 @@ class AuthTest extends TestCase
             ]);
 
         // Mock the prepared statement
-        $stmt = $this->createMock(\mysqli_stmt::class);
+        $stmt = $this->getMockBuilder(\mysqli_stmt::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['bind_param', 'execute', 'get_result'])
+            ->getMock();
+            
         $stmt->method('bind_param')
             ->willReturn(true);
         $stmt->method('execute')
@@ -59,7 +63,11 @@ class AuthTest extends TestCase
             ]);
 
         // Mock the prepared statement
-        $stmt = $this->createMock(\mysqli_stmt::class);
+        $stmt = $this->getMockBuilder(\mysqli_stmt::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['bind_param', 'execute', 'get_result'])
+            ->getMock();
+            
         $stmt->method('bind_param')
             ->willReturn(true);
         $stmt->method('execute')
@@ -85,7 +93,11 @@ class AuthTest extends TestCase
         $this->createTestUser($username);
 
         // Mock the second user creation to throw an exception
-        $stmt = $this->createMock(\mysqli_stmt::class);
+        $stmt = $this->getMockBuilder(\mysqli_stmt::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['bind_param', 'execute'])
+            ->getMock();
+            
         $stmt->method('bind_param')
             ->willReturn(true);
         $stmt->method('execute')
@@ -114,7 +126,11 @@ class AuthTest extends TestCase
             ]);
 
         // Mock the prepared statement
-        $stmt = $this->createMock(\mysqli_stmt::class);
+        $stmt = $this->getMockBuilder(\mysqli_stmt::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['bind_param', 'execute', 'get_result'])
+            ->getMock();
+            
         $stmt->method('bind_param')
             ->willReturn(true);
         $stmt->method('execute')
