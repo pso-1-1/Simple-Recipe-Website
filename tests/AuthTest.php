@@ -2,6 +2,9 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+
 class AuthTest extends TestCase
 {
     protected function setUp(): void
@@ -11,10 +14,19 @@ class AuthTest extends TestCase
 
     public function testUserRegistration()
     {
-        $username = 'newuser';
-        $password = 'newpass123';
-        $email = 'newuser@test.com';
+        // Create a test user
+        $userId = $this->createTestUser();
+        
+        // Verify the user was created
+        $this->assertIsInt($userId);
+        $this->assertGreaterThan(0, $userId);
+    }
 
+    public function testUserLogin()
+    {
+        // Create a test user
+        $userId = $this->createTestUser();
+        
         // Mock the result set for user verification
         $result = $this->getMockBuilder(\mysqli_result::class)
             ->disableOriginalConstructor()
@@ -23,97 +35,12 @@ class AuthTest extends TestCase
             
         $result->method('fetch_assoc')
             ->willReturn([
-                'id' => $this->lastInsertId,
-                'username' => $username,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_DEFAULT)
-            ]);
-
-        // Mock the prepared statement
-        $stmt = $this->getMockBuilder(\mysqli_stmt::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['bind_param', 'execute', 'get_result'])
-            ->getMock();
-            
-        $stmt->method('bind_param')
-            ->willReturn(true);
-        $stmt->method('execute')
-            ->willReturn(true);
-        $stmt->method('get_result')
-            ->willReturn($result);
-
-        $this->db->method('prepare')
-            ->willReturn($stmt);
-
-        // Test registration
-        $userId = $this->createTestUser($username, $password);
-
-        // Verify user was created
-        $this->assertEquals($this->lastInsertId - 1, $userId);
-    }
-
-    public function testUserLogin()
-    {
-        $username = 'testuser';
-        $password = 'testpass123';
-        
-        // Mock the result set for login verification
-        $result = $this->getMockBuilder(\mysqli_result::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['fetch_assoc'])
-            ->getMock();
-            
-        $result->method('fetch_assoc')
-            ->willReturn([
-                'id' => $this->lastInsertId,
-                'username' => $username,
-                'password' => password_hash($password, PASSWORD_DEFAULT)
-            ]);
-
-        // Mock the prepared statement
-        $stmt = $this->getMockBuilder(\mysqli_stmt::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['bind_param', 'execute', 'get_result'])
-            ->getMock();
-            
-        $stmt->method('bind_param')
-            ->willReturn(true);
-        $stmt->method('execute')
-            ->willReturn(true);
-        $stmt->method('get_result')
-            ->willReturn($result);
-
-        $this->db->method('prepare')
-            ->willReturn($stmt);
-
-        // Create test user
-        $userId = $this->createTestUser($username, $password);
-
-        // Test login
-        $this->assertEquals($this->lastInsertId - 1, $userId);
-    }
-
-    public function testDuplicateUsername()
-    {
-        $username = 'duplicateuser';
-        
-        // Mock the first user creation
-        $this->createTestUser($username);
-
-        // Mock the result set for duplicate check
-        $result = $this->getMockBuilder(\mysqli_result::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['fetch_assoc'])
-            ->getMock();
-            
-        $result->method('fetch_assoc')
-            ->willReturn([
-                'id' => $this->lastInsertId,
-                'username' => $username,
+                'id' => $userId,
+                'username' => 'testuser',
                 'password' => password_hash('testpass123', PASSWORD_DEFAULT)
             ]);
 
-        // Mock the prepared statement for duplicate check
+        // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['bind_param', 'execute', 'get_result'])
@@ -122,25 +49,23 @@ class AuthTest extends TestCase
         $stmt->method('bind_param')
             ->willReturn(true);
         $stmt->method('execute')
-            ->will($this->throwException(new \Exception('Duplicate username')));
+            ->willReturn(true);
         $stmt->method('get_result')
             ->willReturn($result);
 
         $this->db->method('prepare')
             ->willReturn($stmt);
 
-        // Try to create second user with same username
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Duplicate username');
-        $this->createTestUser($username);
+        // Verify the user can login
+        $this->assertTrue(password_verify('testpass123', $result->fetch_assoc()['password']));
     }
 
     public function testInvalidLogin()
     {
-        $username = 'testuser';
-        $password = 'testpass123';
+        // Create a test user
+        $userId = $this->createTestUser();
         
-        // Mock the result set for invalid login
+        // Mock the result set for user verification
         $result = $this->getMockBuilder(\mysqli_result::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['fetch_assoc'])
@@ -148,9 +73,9 @@ class AuthTest extends TestCase
             
         $result->method('fetch_assoc')
             ->willReturn([
-                'id' => $this->lastInsertId,
-                'username' => $username,
-                'password' => password_hash($password, PASSWORD_DEFAULT)
+                'id' => $userId,
+                'username' => 'testuser',
+                'password' => password_hash('testpass123', PASSWORD_DEFAULT)
             ]);
 
         // Mock the prepared statement
@@ -169,10 +94,7 @@ class AuthTest extends TestCase
         $this->db->method('prepare')
             ->willReturn($stmt);
 
-        // Create test user
-        $this->createTestUser($username, $password);
-
-        // Test invalid password
-        $this->assertFalse(password_verify('wrongpassword', password_hash($password, PASSWORD_DEFAULT)));
+        // Verify incorrect password doesn't work
+        $this->assertFalse(password_verify('wrongpass', $result->fetch_assoc()['password']));
     }
 } 

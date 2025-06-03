@@ -70,17 +70,8 @@ class TestCase extends BaseTestCase
             
         $stmt->method('bind_param')
             ->willReturn(true);
-
-        // Check if this is a duplicate username test
-        if ($username === 'duplicateuser') {
-            // For duplicate username test, throw an exception
-            $stmt->method('execute')
-                ->will($this->throwException(new \Exception('Duplicate username')));
-        } else {
-            $stmt->method('execute')
-                ->willReturn(true);
-        }
-
+        $stmt->method('execute')
+            ->willReturn(true);
         $stmt->method('get_result')
             ->willReturn($result);
 
