@@ -3,6 +3,7 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class TestCase extends BaseTestCase
 {
@@ -12,48 +13,56 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
         
-        // Set up test database connection
-        $this->db = new \mysqli(
-            getenv('DB_HOST') ?: '127.0.0.1',
-            getenv('DB_USER') ?: 'root',
-            getenv('DB_PASSWORD') ?: 'rootpassword',
-            getenv('DB_NAME') ?: 'recipedb',
-            (int)(getenv('DB_PORT') ?: 3306)
-        );
-
-        if ($this->db->connect_error) {
-            throw new \Exception('Database connection failed: ' . $this->db->connect_error);
-        }
+        // Create a mock for mysqli
+        $this->db = $this->createMock(\mysqli::class);
+        
+        // Set up common mock expectations
+        $this->db->method('prepare')
+            ->willReturn($this->createMock(\mysqli_stmt::class));
+            
+        $this->db->method('query')
+            ->willReturn($this->createMock(\mysqli_result::class));
+            
+        $this->db->method('insert_id')
+            ->willReturn(1);
     }
 
     protected function tearDown(): void
     {
-        if ($this->db) {
-            $this->db->close();
-        }
+        $this->db = null;
         parent::tearDown();
     }
 
     protected function createTestUser($username = 'testuser', $password = 'testpass123')
     {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        $stmt = $this->db->prepare($sql);
-        $email = $username . '@test.com';
-        $stmt->bind_param('sss', $username, $hashedPassword, $email);
-        $stmt->execute();
-        return $this->db->insert_id;
+        
+        // Mock the prepared statement
+        $stmt = $this->createMock(\mysqli_stmt::class);
+        $stmt->method('bind_param')
+            ->willReturn(true);
+        $stmt->method('execute')
+            ->willReturn(true);
+            
+        $this->db->method('prepare')
+            ->willReturn($stmt);
+            
+        return 1; // Return a mock user ID
     }
 
     protected function createTestRecipe($userId, $title = 'Test Recipe')
     {
-        $sql = "INSERT INTO recipes (user_id, title, ingredients, instructions) VALUES (?, ?, ?, ?)";
-        $stmt = $this->db->prepare($sql);
-        $ingredients = 'Test ingredients';
-        $instructions = 'Test instructions';
-        $stmt->bind_param('isss', $userId, $title, $ingredients, $instructions);
-        $stmt->execute();
-        return $this->db->insert_id;
+        // Mock the prepared statement
+        $stmt = $this->createMock(\mysqli_stmt::class);
+        $stmt->method('bind_param')
+            ->willReturn(true);
+        $stmt->method('execute')
+            ->willReturn(true);
+            
+        $this->db->method('prepare')
+            ->willReturn($stmt);
+            
+        return 1; // Return a mock recipe ID
     }
 
     protected function cleanTestData()

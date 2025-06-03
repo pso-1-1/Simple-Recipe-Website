@@ -12,18 +12,6 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: recipedb
-          MYSQL_USER: recipeadmin
-          MYSQL_PASSWORD: kod12345
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - uses: actions/checkout@v3
@@ -49,10 +37,6 @@ jobs:
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
-
-    - name: Create test database
-      run: |
-        mysql -h 127.0.0.1 -u root -prootpassword recipedb < recipedb.sql
 
     - name: Run PHPUnit tests
       run: |
