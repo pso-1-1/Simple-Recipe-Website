@@ -50,7 +50,11 @@ class TestCase extends BaseTestCase
     protected function createTestUser($username = 'testuser', $password = 'testpass123')
     {
         // Mock the result set for user verification
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_assoc'])
+            ->getMock();
+            
         $result->method('fetch_assoc')
             ->willReturn([
                 'id' => $this->lastInsertId,
@@ -61,8 +65,7 @@ class TestCase extends BaseTestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['bind_param', 'execute'])
-            ->addMethods(['get_result'])
+            ->onlyMethods(['bind_param', 'execute', 'get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
@@ -81,7 +84,11 @@ class TestCase extends BaseTestCase
     protected function createTestRecipe($userId)
     {
         // Mock the result set for recipe verification
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_assoc'])
+            ->getMock();
+            
         $result->method('fetch_assoc')
             ->willReturn([
                 'id' => $this->lastInsertId,
@@ -94,8 +101,7 @@ class TestCase extends BaseTestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['bind_param', 'execute'])
-            ->addMethods(['get_result'])
+            ->onlyMethods(['bind_param', 'execute', 'get_result'])
             ->getMock();
             
         $stmt->method('bind_param')

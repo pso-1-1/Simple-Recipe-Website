@@ -32,8 +32,7 @@ class AuthTest extends TestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['bind_param', 'execute'])
-            ->addMethods(['get_result'])
+            ->onlyMethods(['bind_param', 'execute', 'get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
@@ -74,8 +73,7 @@ class AuthTest extends TestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['bind_param', 'execute'])
-            ->addMethods(['get_result'])
+            ->onlyMethods(['bind_param', 'execute', 'get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
@@ -142,8 +140,7 @@ class AuthTest extends TestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['bind_param', 'execute'])
-            ->addMethods(['get_result'])
+            ->onlyMethods(['bind_param', 'execute', 'get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
