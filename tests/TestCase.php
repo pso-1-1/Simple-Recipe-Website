@@ -78,6 +78,13 @@ class TestCase extends BaseTestCase
         $this->db->method('prepare')
             ->willReturn($stmt);
 
+        // Check if this is a duplicate username test
+        if ($username === 'duplicateuser') {
+            // For duplicate username test, throw an exception
+            $stmt->method('execute')
+                ->will($this->throwException(new \Exception('Duplicate username')));
+        }
+
         return $this->lastInsertId++;
     }
 
