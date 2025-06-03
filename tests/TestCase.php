@@ -18,7 +18,7 @@ class TestCase extends BaseTestCase
             getenv('DB_USER') ?: 'root',
             getenv('DB_PASSWORD') ?: 'rootpassword',
             getenv('DB_NAME') ?: 'recipedb',
-            getenv('DB_PORT') ?: '3306'
+            (int)(getenv('DB_PORT') ?: 3306)
         );
 
         if ($this->db->connect_error) {
