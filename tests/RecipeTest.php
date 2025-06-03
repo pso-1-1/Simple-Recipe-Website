@@ -129,8 +129,11 @@ class RecipeTest extends TestCase
         $this->db->method('prepare')
             ->willReturn($stmt);
 
+        // Store the result before any potential cleanup
+        $numRows = $result->num_rows();
+
         // Delete recipe
-        $this->assertEquals(0, $result->num_rows);
+        $this->assertEquals(0, $numRows);
     }
 
     public function testListUserRecipes()
