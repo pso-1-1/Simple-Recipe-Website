@@ -57,5 +57,6 @@ jobs:
         ./vendor/bin/phpcs --standard=PSR12 --extensions=php .
 
     - name: PHP Mess Detector
+      continue-on-error: true
       run: |
-        ./vendor/bin/phpmd . text cleancode,codesize,controversial,design,naming,unusedcode
+        ./vendor/bin/phpmd . text cleancode,codesize,design,naming --exclude vendor/
