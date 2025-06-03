@@ -28,7 +28,8 @@ class RecipeTest extends TestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->addMethods(['bind_param', 'execute', 'get_result'])
+            ->onlyMethods(['bind_param', 'execute'])
+            ->addMethods(['get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
@@ -68,7 +69,8 @@ class RecipeTest extends TestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->addMethods(['bind_param', 'execute', 'get_result'])
+            ->onlyMethods(['bind_param', 'execute'])
+            ->addMethods(['get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
@@ -104,7 +106,8 @@ class RecipeTest extends TestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->addMethods(['bind_param', 'execute', 'get_result'])
+            ->onlyMethods(['bind_param', 'execute'])
+            ->addMethods(['get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
@@ -157,7 +160,8 @@ class RecipeTest extends TestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->addMethods(['bind_param', 'execute', 'get_result'])
+            ->onlyMethods(['bind_param', 'execute'])
+            ->addMethods(['get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
@@ -201,7 +205,8 @@ class RecipeTest extends TestCase
         // Mock the prepared statement
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->addMethods(['bind_param', 'execute', 'get_result'])
+            ->onlyMethods(['bind_param', 'execute'])
+            ->addMethods(['get_result'])
             ->getMock();
             
         $stmt->method('bind_param')

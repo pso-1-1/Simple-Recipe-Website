@@ -14,16 +14,11 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
         
-        // Create a mock for mysqli with all required methods
+        // Create mock for mysqli
         $this->db = $this->getMockBuilder(\mysqli::class)
             ->disableOriginalConstructor()
-            ->addMethods([
-                'prepare',
-                'query',
-                'getInsertId',
-                'connect_error',
-                'close'
-            ])
+            ->onlyMethods(['prepare', 'query', 'connect_error', 'close'])
+            ->addMethods(['getInsertId'])
             ->getMock();
         
         // Set up common mock expectations
@@ -33,15 +28,16 @@ class TestCase extends BaseTestCase
         $this->db->method('query')
             ->willReturn($this->createMock(\mysqli_result::class));
             
-        // Set up insert_id handling
-        $this->db->method('getInsertId')
-            ->willReturnCallback(function() {
-                return $this->lastInsertId;
-            });
-
-        // Set up connect_error
         $this->db->method('connect_error')
             ->willReturn(null);
+
+        $this->db->method('close')
+            ->willReturn(true);
+
+        $this->db->method('getInsertId')
+            ->will($this->returnCallback(function() {
+                return $this->lastInsertId;
+            }));
     }
 
     protected function tearDown(): void
@@ -53,38 +49,70 @@ class TestCase extends BaseTestCase
 
     protected function createTestUser($username = 'testuser', $password = 'testpass123')
     {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        
+        // Mock the result set for user verification
+        $result = $this->createMock(\mysqli_result::class);
+        $result->method('fetch_assoc')
+            ->willReturn([
+                'id' => $this->lastInsertId,
+                'username' => $username,
+                'password' => password_hash($password, PASSWORD_DEFAULT)
+            ]);
+
         // Mock the prepared statement
-        $stmt = $this->createMock(\mysqli_stmt::class);
+        $stmt = $this->getMockBuilder(\mysqli_stmt::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['bind_param', 'execute'])
+            ->addMethods(['get_result'])
+            ->getMock();
+            
         $stmt->method('bind_param')
             ->willReturn(true);
         $stmt->method('execute')
             ->willReturn(true);
-            
+        $stmt->method('get_result')
+            ->willReturn($result);
+
         $this->db->method('prepare')
             ->willReturn($stmt);
-            
+
         return $this->lastInsertId++;
     }
 
-    protected function createTestRecipe($userId, $title = 'Test Recipe')
+    protected function createTestRecipe($userId)
     {
+        // Mock the result set for recipe verification
+        $result = $this->createMock(\mysqli_result::class);
+        $result->method('fetch_assoc')
+            ->willReturn([
+                'id' => $this->lastInsertId,
+                'user_id' => $userId,
+                'title' => 'Test Recipe',
+                'ingredients' => 'Test ingredients',
+                'instructions' => 'Test instructions'
+            ]);
+
         // Mock the prepared statement
-        $stmt = $this->createMock(\mysqli_stmt::class);
+        $stmt = $this->getMockBuilder(\mysqli_stmt::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['bind_param', 'execute'])
+            ->addMethods(['get_result'])
+            ->getMock();
+            
         $stmt->method('bind_param')
             ->willReturn(true);
         $stmt->method('execute')
             ->willReturn(true);
-            
+        $stmt->method('get_result')
+            ->willReturn($result);
+
         $this->db->method('prepare')
             ->willReturn($stmt);
-            
+
         return $this->lastInsertId++;
     }
 
     protected function cleanTestData()
     {
-        // No need to clean data when using mocks
+        // No cleanup needed for mocks
     }
 } 
