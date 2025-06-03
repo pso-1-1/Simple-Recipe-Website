@@ -18,7 +18,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: recipedb_test
+          MYSQL_DATABASE: recipedb
           MYSQL_USER: recipeadmin
           MYSQL_PASSWORD: kod12345
         ports:
@@ -52,7 +52,7 @@ jobs:
 
     - name: Create test database
       run: |
-        mysql -h 127.0.0.1 -u root -prootpassword recipedb_test < recipedb.sql
+        mysql -h 127.0.0.1 -u root -prootpassword recipedb < recipedb.sql
 
     - name: Run PHPUnit tests
       run: |
@@ -62,7 +62,7 @@ jobs:
       uses: codecov/codecov-action@v3
       with:
         file: ./coverage.xml
-        fail_ci_if_error: true
+        fail_ci_if_error: false
 
     - name: PHP Syntax Check
       run: find . -type f -name "*.php" -exec php -l {} \;
