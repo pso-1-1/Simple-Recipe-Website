@@ -107,7 +107,7 @@ class RecipeTest extends TestCase
         // Mock the result set for deleted recipe
         $result = $this->getMockBuilder(\mysqli_result::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['num_rows'])
+            ->addMethods(['num_rows'])
             ->getMock();
             
         $result->method('num_rows')
