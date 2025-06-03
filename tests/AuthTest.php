@@ -19,7 +19,7 @@ class AuthTest extends TestCase
         $result = $this->createMock(\mysqli_result::class);
         $result->method('fetch_assoc')
             ->willReturn([
-                'id' => 1,
+                'id' => $this->db->insert_id,
                 'username' => $username,
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_DEFAULT)
@@ -41,7 +41,7 @@ class AuthTest extends TestCase
         $userId = $this->createTestUser($username, $password);
 
         // Verify user was created
-        $this->assertEquals(1, $userId);
+        $this->assertEquals($this->db->insert_id, $userId);
     }
 
     public function testUserLogin()
@@ -53,7 +53,7 @@ class AuthTest extends TestCase
         $result = $this->createMock(\mysqli_result::class);
         $result->method('fetch_assoc')
             ->willReturn([
-                'id' => 1,
+                'id' => $this->db->insert_id,
                 'username' => $username,
                 'password' => password_hash($password, PASSWORD_DEFAULT)
             ]);
@@ -74,7 +74,7 @@ class AuthTest extends TestCase
         $userId = $this->createTestUser($username, $password);
 
         // Test login
-        $this->assertEquals(1, $userId);
+        $this->assertEquals($this->db->insert_id, $userId);
     }
 
     public function testDuplicateUsername()
@@ -108,7 +108,7 @@ class AuthTest extends TestCase
         $result = $this->createMock(\mysqli_result::class);
         $result->method('fetch_assoc')
             ->willReturn([
-                'id' => 1,
+                'id' => $this->db->insert_id,
                 'username' => $username,
                 'password' => password_hash($password, PASSWORD_DEFAULT)
             ]);

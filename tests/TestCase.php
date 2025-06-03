@@ -14,7 +14,9 @@ class TestCase extends BaseTestCase
         parent::setUp();
         
         // Create a mock for mysqli
-        $this->db = $this->createMock(\mysqli::class);
+        $this->db = $this->getMockBuilder(\mysqli::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         
         // Set up common mock expectations
         $this->db->method('prepare')
@@ -23,8 +25,8 @@ class TestCase extends BaseTestCase
         $this->db->method('query')
             ->willReturn($this->createMock(\mysqli_result::class));
             
-        $this->db->method('insert_id')
-            ->willReturn(1);
+        // Set up insert_id as a property
+        $this->db->insert_id = 1;
     }
 
     protected function tearDown(): void
@@ -47,7 +49,7 @@ class TestCase extends BaseTestCase
         $this->db->method('prepare')
             ->willReturn($stmt);
             
-        return 1; // Return a mock user ID
+        return $this->db->insert_id; // Return the mock insert_id
     }
 
     protected function createTestRecipe($userId, $title = 'Test Recipe')
@@ -62,12 +64,11 @@ class TestCase extends BaseTestCase
         $this->db->method('prepare')
             ->willReturn($stmt);
             
-        return 1; // Return a mock recipe ID
+        return $this->db->insert_id; // Return the mock insert_id
     }
 
     protected function cleanTestData()
     {
-        $this->db->query("DELETE FROM recipes");
-        $this->db->query("DELETE FROM users");
+        // No need to clean data when using mocks
     }
 } 
