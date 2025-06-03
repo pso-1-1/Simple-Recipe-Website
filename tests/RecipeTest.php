@@ -15,7 +15,11 @@ class RecipeTest extends TestCase
         $userId = $this->createTestUser();
 
         // Mock the result set for recipe verification
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_assoc'])
+            ->getMock();
+            
         $result->method('fetch_assoc')
             ->willReturn([
                 'id' => $this->lastInsertId,
@@ -56,7 +60,11 @@ class RecipeTest extends TestCase
         $recipeId = $this->createTestRecipe($userId);
 
         // Mock the result set for updated recipe
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_assoc'])
+            ->getMock();
+            
         $result->method('fetch_assoc')
             ->willReturn([
                 'id' => $recipeId,
@@ -99,7 +107,11 @@ class RecipeTest extends TestCase
         $recipeId = $this->createTestRecipe($userId);
 
         // Mock the result set for deleted recipe
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['num_rows'])
+            ->getMock();
+            
         $result->method('num_rows')
             ->willReturn(0);
 
@@ -130,7 +142,11 @@ class RecipeTest extends TestCase
         $userId = $this->createTestUser();
 
         // Mock the result set for user's recipes
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_all'])
+            ->getMock();
+            
         $result->method('fetch_all')
             ->with(MYSQLI_ASSOC)
             ->willReturn([
@@ -189,7 +205,11 @@ class RecipeTest extends TestCase
         $userId = $this->createTestUser();
 
         // Mock the result set for recipe search
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_all'])
+            ->getMock();
+            
         $result->method('fetch_all')
             ->with(MYSQLI_ASSOC)
             ->willReturn([

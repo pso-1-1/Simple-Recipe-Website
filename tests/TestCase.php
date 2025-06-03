@@ -17,8 +17,8 @@ class TestCase extends BaseTestCase
         // Create mock for mysqli
         $this->db = $this->getMockBuilder(\mysqli::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['prepare', 'query', 'connect_error', 'close'])
-            ->addMethods(['getInsertId'])
+            ->onlyMethods(['prepare', 'query', 'close'])
+            ->addMethods(['connect_error', 'getInsertId'])
             ->getMock();
         
         // Set up common mock expectations

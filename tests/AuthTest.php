@@ -16,7 +16,11 @@ class AuthTest extends TestCase
         $email = 'newuser@test.com';
 
         // Mock the result set for user verification
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_assoc'])
+            ->getMock();
+            
         $result->method('fetch_assoc')
             ->willReturn([
                 'id' => $this->lastInsertId,
@@ -55,7 +59,11 @@ class AuthTest extends TestCase
         $password = 'testpass123';
         
         // Mock the result set for login verification
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_assoc'])
+            ->getMock();
+            
         $result->method('fetch_assoc')
             ->willReturn([
                 'id' => $this->lastInsertId,
@@ -119,7 +127,11 @@ class AuthTest extends TestCase
         $password = 'testpass123';
         
         // Mock the result set for invalid login
-        $result = $this->createMock(\mysqli_result::class);
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_assoc'])
+            ->getMock();
+            
         $result->method('fetch_assoc')
             ->willReturn([
                 'id' => $this->lastInsertId,
