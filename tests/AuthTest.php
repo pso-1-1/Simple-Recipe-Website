@@ -2,10 +2,9 @@
 
 namespace Tests;
 
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class AuthTest extends TestCase
+class AuthTest extends \Tests\TestCase
 {
     protected function setUp(): void
     {
