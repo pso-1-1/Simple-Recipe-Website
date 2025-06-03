@@ -8,14 +8,16 @@ use PHPUnit\Framework\MockObject\MockObject;
 class TestCase extends BaseTestCase
 {
     protected $db;
+    protected $lastInsertId = 1;
 
     protected function setUp(): void
     {
         parent::setUp();
         
-        // Create a mock for mysqli
+        // Create a mock for mysqli with a custom class
         $this->db = $this->getMockBuilder(\mysqli::class)
             ->disableOriginalConstructor()
+            ->addMethods(['getInsertId'])
             ->getMock();
         
         // Set up common mock expectations
@@ -25,13 +27,17 @@ class TestCase extends BaseTestCase
         $this->db->method('query')
             ->willReturn($this->createMock(\mysqli_result::class));
             
-        // Set up insert_id as a property
-        $this->db->insert_id = 1;
+        // Set up insert_id handling
+        $this->db->method('getInsertId')
+            ->willReturnCallback(function() {
+                return $this->lastInsertId;
+            });
     }
 
     protected function tearDown(): void
     {
         $this->db = null;
+        $this->lastInsertId = 1;
         parent::tearDown();
     }
 
@@ -49,7 +55,7 @@ class TestCase extends BaseTestCase
         $this->db->method('prepare')
             ->willReturn($stmt);
             
-        return $this->db->insert_id; // Return the mock insert_id
+        return $this->lastInsertId++;
     }
 
     protected function createTestRecipe($userId, $title = 'Test Recipe')
@@ -64,7 +70,7 @@ class TestCase extends BaseTestCase
         $this->db->method('prepare')
             ->willReturn($stmt);
             
-        return $this->db->insert_id; // Return the mock insert_id
+        return $this->lastInsertId++;
     }
 
     protected function cleanTestData()

@@ -18,7 +18,7 @@ class RecipeTest extends TestCase
         $result = $this->createMock(\mysqli_result::class);
         $result->method('fetch_assoc')
             ->willReturn([
-                'id' => $this->db->insert_id,
+                'id' => $this->lastInsertId,
                 'user_id' => $userId,
                 'title' => 'Test Recipe',
                 'ingredients' => 'Test ingredients',
@@ -41,7 +41,7 @@ class RecipeTest extends TestCase
         $recipeId = $this->createTestRecipe($userId);
 
         // Verify recipe was created
-        $this->assertEquals($this->db->insert_id, $recipeId);
+        $this->assertEquals($this->lastInsertId - 1, $recipeId);
     }
 
     public function testUpdateRecipe()
@@ -79,7 +79,7 @@ class RecipeTest extends TestCase
         $newInstructions = 'Updated instructions';
 
         // Verify update
-        $this->assertEquals($this->db->insert_id, $recipeId);
+        $this->assertEquals($this->lastInsertId - 1, $recipeId);
     }
 
     public function testDeleteRecipe()
@@ -120,21 +120,21 @@ class RecipeTest extends TestCase
             ->with(MYSQLI_ASSOC)
             ->willReturn([
                 [
-                    'id' => $this->db->insert_id + 2,
+                    'id' => $this->lastInsertId + 2,
                     'user_id' => $userId,
                     'title' => 'Recipe 3',
                     'ingredients' => 'Test ingredients',
                     'instructions' => 'Test instructions'
                 ],
                 [
-                    'id' => $this->db->insert_id + 1,
+                    'id' => $this->lastInsertId + 1,
                     'user_id' => $userId,
                     'title' => 'Recipe 2',
                     'ingredients' => 'Test ingredients',
                     'instructions' => 'Test instructions'
                 ],
                 [
-                    'id' => $this->db->insert_id,
+                    'id' => $this->lastInsertId,
                     'user_id' => $userId,
                     'title' => 'Recipe 1',
                     'ingredients' => 'Test ingredients',
@@ -174,7 +174,7 @@ class RecipeTest extends TestCase
             ->with(MYSQLI_ASSOC)
             ->willReturn([
                 [
-                    'id' => $this->db->insert_id,
+                    'id' => $this->lastInsertId,
                     'user_id' => $userId,
                     'title' => 'Chicken Curry',
                     'ingredients' => 'Test ingredients',
