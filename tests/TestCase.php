@@ -14,10 +14,11 @@ class TestCase extends BaseTestCase
         
         // Set up test database connection
         $this->db = new \mysqli(
-            getenv('DB_HOST') ?: 'localhost',
-            getenv('DB_USER') ?: 'recipeadmin',
-            getenv('DB_PASSWORD') ?: 'kod12345',
-            getenv('DB_NAME') ?: 'recipedb_test'
+            getenv('DB_HOST') ?: '127.0.0.1',
+            getenv('DB_USER') ?: 'root',
+            getenv('DB_PASSWORD') ?: 'rootpassword',
+            getenv('DB_NAME') ?: 'recipedb',
+            getenv('DB_PORT') ?: '3306'
         );
 
         if ($this->db->connect_error) {
