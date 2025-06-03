@@ -100,22 +100,38 @@ class AuthTest extends TestCase
         // Mock the first user creation
         $this->createTestUser($username);
 
-        // Mock the second user creation to throw an exception
+        // Mock the result set for duplicate check
+        $result = $this->getMockBuilder(\mysqli_result::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['fetch_assoc'])
+            ->getMock();
+            
+        $result->method('fetch_assoc')
+            ->willReturn([
+                'id' => $this->lastInsertId,
+                'username' => $username,
+                'password' => password_hash('testpass123', PASSWORD_DEFAULT)
+            ]);
+
+        // Mock the prepared statement for duplicate check
         $stmt = $this->getMockBuilder(\mysqli_stmt::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['bind_param', 'execute'])
+            ->onlyMethods(['bind_param', 'execute', 'get_result'])
             ->getMock();
             
         $stmt->method('bind_param')
             ->willReturn(true);
         $stmt->method('execute')
             ->will($this->throwException(new \Exception('Duplicate username')));
+        $stmt->method('get_result')
+            ->willReturn($result);
 
         $this->db->method('prepare')
             ->willReturn($stmt);
 
         // Try to create second user with same username
         $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Duplicate username');
         $this->createTestUser($username);
     }
 
